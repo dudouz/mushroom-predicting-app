@@ -23,9 +23,14 @@ import {
   Population,
   Habitat,
 } from "../enums/mushroom";
-type PredictResult = "Edible" | "Poisonous";
+import { Examples } from "./Examples";
 
-export const Form = () => {
+export type PredictResult = "Edible" | "Poisonous";
+interface FormProps {
+  setResult: (result: PredictResult) => void;
+}
+
+export const Form: React.FC<FormProps> = ({ setResult }) => {
   const [capShape, setCapShape] = React.useState<CapShape>(CapShape.BELL);
   const [capSurface, setCapSurface] = React.useState<CapSurface>(
     CapSurface.FIBROUS
@@ -68,10 +73,6 @@ export const Form = () => {
     Population.ABUNDANT
   );
   const [habitat, setHabitat] = React.useState<Habitat>(Habitat.GRASSES);
-
-  const [results, setResults] = React.useState<{
-    result: PredictResult;
-  } | null>(null);
 
   const onSelectHandler = React.useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
@@ -148,6 +149,7 @@ export const Form = () => {
     },
     []
   );
+
   const onSubmitHandler = React.useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -188,7 +190,7 @@ export const Form = () => {
           if (res.ok) {
             const data = await res.json();
 
-            setResults(data);
+            setResult(data.result as PredictResult);
           } else {
             console.log("Error");
           }
@@ -220,350 +222,381 @@ export const Form = () => {
       sporePrintColor,
       population,
       habitat,
+      setResult,
     ]
   );
 
-  const clearResults = React.useCallback(() => setResults(null), []);
+  const setPoisonousExample = React.useCallback(async () => {
+    const data = {
+      capShape: "x",
+      capSurface: "f",
+      capColor: "g",
+      bruises: "f",
+      odor: "f",
+      gillAttachment: "f",
+      gillSpacing: "c",
+      gillSize: "b",
+      gillColor: "g",
+      stalkShape: "e",
+      stalkRoot: "b",
+      stalkSurfaceAboveRing: "k",
+      stalkSurfaceBelowRing: "k",
+      stalkColorAboveRing: "b",
+      stalkColorBelowRing: "n",
+      veilType: "p",
+      veilColor: "w",
+      ringNumber: "o",
+      ringType: "h",
+      sporePrintColor: "v",
+      population: "g",
+      habitat: "g",
+    };
 
-  const renderResult = React.useCallback((result: PredictResult) => {
-    if (result === "Edible") {
-      return (
-        <div>
-          <p>Este cogumelo é:</p>
+    await fetch("http://localhost:5000/api/evaluate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
 
-          <hr />
-          <p>Comestível</p>
+          setResult(data.result as PredictResult);
+        } else {
+          console.log("Error");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-          <button onClick={clearResults}>Tentar de novo</button>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <p>Este cogumelo é:</p>
+    // mushroomName = "Amanita Muscaria";
+  }, [setResult]);
 
-          <hr />
-          <p>Venenoso</p>
+  const setEdibleExample = React.useCallback(async () => {
+    const data = {
+      capShape: "f",
+      capSurface: "f",
+      capColor: "n",
+      bruises: "t",
+      odor: "n",
+      gillAttachment: "f",
+      gillSpacing: "c",
+      gillSize: "b",
+      gillColor: "w",
+      stalkShape: "t",
+      stalkRoot: "b",
+      stalkSurfaceAboveRing: "s",
+      stalkSurfaceBelowRing: "s",
+      stalkColorAboveRing: "p",
+      stalkColorBelowRing: "p",
+      veilType: "p",
+      veilColor: "w",
+      ringNumber: "o",
+      ringType: "l",
+      sporePrintColor: "h",
+      population: "v",
+      habitat: "d",
+    };
 
-          <button onClick={clearResults}>Tentar de novo</button>
-        </div>
-      );
-    }
-  }, []);
+    await fetch("http://localhost:5000/api/evaluate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
 
-  React.useEffect(() => {
-    console.log({
-      capShape,
-      capSurface,
-      capColor,
-      bruises,
-      odor,
-      gillAttachment,
-      gillSpacing,
-      gillSize,
-      gillColor,
-      stalkShape,
-      stalkRoot,
-      stalkSurfaceAboveRing,
-      stalkSurfaceBelowRing,
-      stalkColorAboveRing,
-      stalkColorBelowRing,
-      veilType,
-      veilColor,
-      ringNumber,
-      ringType,
-      sporePrintColor,
-      population,
-      habitat,
-    });
-  }, [
-    bruises,
-    capColor,
-    capShape,
-    capSurface,
-    gillAttachment,
-    gillColor,
-    gillSize,
-    gillSpacing,
-    habitat,
-    odor,
-    population,
-    ringNumber,
-    ringType,
-    sporePrintColor,
-    stalkColorAboveRing,
-    stalkColorBelowRing,
-    stalkRoot,
-    stalkShape,
-    stalkSurfaceAboveRing,
-    stalkSurfaceBelowRing,
-    veilColor,
-    veilType,
-  ]);
-  if (results) {
-    return (
-      <div>
-        <h1>{renderResult(results.result)}</h1>
-      </div>
-    );
-  }
+          setResult(data.result as PredictResult);
+        } else {
+          console.log("Error");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // mushroomName = "Agaricus Campestris";
+  }, [setResult]);
 
   return (
-    <form onSubmit={onSubmitHandler}>
-      <div>
-        <div className="select_wrapper">
-          <label htmlFor="cap-shape">Formato do Chapéu</label>
-          <select onChange={onSelectHandler} id="cap-shape">
-            <option value={CapShape.BELL}>Sino</option>
-            <option value={CapShape.CONICAL}>Cônico</option>
-            <option value={CapShape.CONVEX}>Convexo</option>
-            <option value={CapShape.FLAT}>Plano</option>
-            <option value={CapShape.KNOBBED}>Abobadado</option>
-            <option value={CapShape.SUNKEN}>Afundado</option>
-          </select>
+    <>
+      <form onSubmit={onSubmitHandler} className="mushroom-form">
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="cap-shape">Formato do Chapéu</label>
+            <select onChange={onSelectHandler} id="cap-shape">
+              <option value={CapShape.BELL}>Sino</option>
+              <option value={CapShape.CONICAL}>Cônico</option>
+              <option value={CapShape.CONVEX}>Convexo</option>
+              <option value={CapShape.FLAT}>Plano</option>
+              <option value={CapShape.KNOBBED}>Abobadado</option>
+              <option value={CapShape.SUNKEN}>Afundado</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="cap-surface">Superfície do Chapéu</label>
+            <select onChange={onSelectHandler} id="cap-surface">
+              <option value={CapSurface.FIBROUS}>Fibrosa</option>
+              <option value={CapSurface.GROOVES}>Estrias</option>
+              <option value={CapSurface.SCALY}>Escamosa</option>
+              <option value={CapSurface.SMOOTH}>Lisa</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="cap-color">Cor do Chapéu</label>
+            <select onChange={onSelectHandler} id="cap-color">
+              <option value={CapColor.BROWN}>Marrom</option>
+              <option value={CapColor.BUFF}>Bege</option>
+              <option value={CapColor.CINNAMON}>Canela</option>
+              <option value={CapColor.GRAY}>Cinza</option>
+              <option value={CapColor.GREEN}>Verde</option>
+              <option value={CapColor.PINK}>Rosa</option>
+              <option value={CapColor.PURPLE}>Roxo</option>
+              <option value={CapColor.RED}>Vermelho</option>
+              <option value={CapColor.WHITE}>Branco</option>
+              <option value={CapColor.YELLOW}>Amarelo</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="cap-surface">Superfície do Chapéu</label>
-          <select onChange={onSelectHandler} id="cap-surface">
-            <option value={CapSurface.FIBROUS}>Fibrosa</option>
-            <option value={CapSurface.GROOVES}>Estrias</option>
-            <option value={CapSurface.SCALY}>Escamosa</option>
-            <option value={CapSurface.SMOOTH}>Lisa</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="bruises">Machucados</label>
+            <select onChange={onSelectHandler} id="bruises">
+              <option value={Bruises.BRUISES}>Com Machucados</option>
+              <option value={Bruises.NO}>Sem Machucados</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="odor">Odor</label>
+            <select onChange={onSelectHandler} id="odor">
+              <option value={Odor.ALMOND}>Amêndoa</option>
+              <option value={Odor.ANISE}>Anis</option>
+              <option value={Odor.CREOSOTE}>Creosoto</option>
+              <option value={Odor.FISHY}>De Peixe</option>
+              <option value={Odor.FOUL}>Fétido</option>
+              <option value={Odor.MUSTY}>Mofado</option>
+              <option value={Odor.NONE}>Nenhum</option>
+              <option value={Odor.PUNGENT}>Acre</option>
+              <option value={Odor.SPICY}>Picante</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="gill-attachment">Anexo das Lamelas</label>
+            <select onChange={onSelectHandler} id="gill-attachment">
+              <option value={GillAttachment.ATTACHED}>Anexadas</option>
+              <option value={GillAttachment.DESCENDING}>Descendentes</option>
+              <option value={GillAttachment.FREE}>Livres</option>
+              <option value={GillAttachment.NOTCHED}>Entalhadas</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="cap-color">Cor do Chapéu</label>
-          <select onChange={onSelectHandler} id="cap-color">
-            <option value={CapColor.BROWN}>Marrom</option>
-            <option value={CapColor.BUFF}>Bege</option>
-            <option value={CapColor.CINNAMON}>Canela</option>
-            <option value={CapColor.GRAY}>Cinza</option>
-            <option value={CapColor.GREEN}>Verde</option>
-            <option value={CapColor.PINK}>Rosa</option>
-            <option value={CapColor.PURPLE}>Roxo</option>
-            <option value={CapColor.RED}>Vermelho</option>
-            <option value={CapColor.WHITE}>Branco</option>
-            <option value={CapColor.YELLOW}>Amarelo</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="gill-spacing">Espaçamento das Lamelas</label>
+            <select onChange={onSelectHandler} id="gill-spacing">
+              <option value={GillSpacing.CLOSE}>Próximas</option>
+              <option value={GillSpacing.CROWDED}>Aglomeradas</option>
+              <option value={GillSpacing.DISTANT}>Distantes</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="gill-size">Tamanho das Lamelas</label>
+            <select onChange={onSelectHandler} id="gill-size">
+              <option value={GillSize.BROAD}>Largas</option>
+              <option value={GillSize.NARROW}>Estreitas</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="gill-color">Cor das Lamelas</label>
+            <select onChange={onSelectHandler} id="gill-color">
+              <option value={GillColor.BLACK}>Pretas</option>
+              <option value={GillColor.BROWN}>Marrons</option>
+              <option value={GillColor.BUFF}>Bege</option>
+              <option value={GillColor.CHOCOLATE}>Chocolate</option>
+              <option value={GillColor.GRAY}>Cinza</option>
+              <option value={GillColor.GREEN}>Verdes</option>
+              <option value={GillColor.ORANGE}>Laranjas</option>
+              <option value={GillColor.PINK}>Rosas</option>
+              <option value={GillColor.PURPLE}>Roxas</option>
+              <option value={GillColor.RED}>Vermelhas</option>
+              <option value={GillColor.WHITE}>Brancas</option>
+              <option value={GillColor.YELLOW}>Amarelas</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="bruises">Machucados</label>
-          <select onChange={onSelectHandler} id="bruises">
-            <option value={Bruises.BRUISES}>Com Machucados</option>
-            <option value={Bruises.NO}>Sem Machucados</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-shape">Formato do Estipe</label>
+            <select onChange={onSelectHandler} id="stalk-shape">
+              <option value={StalkShape.ENLARGING}>Alargando</option>
+              <option value={StalkShape.TAPERING}>Afunilando</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-root">Raiz do Estipe</label>
+            <select onChange={onSelectHandler} id="stalk-root">
+              <option value={StalkRoot.BULBOUS}>Bolbosa</option>
+              <option value={StalkRoot.CLUB}>Clubada</option>
+              <option value={StalkRoot.CUP}>Em Forma de Copo</option>
+              <option value={StalkRoot.EQUAL}>Igual</option>
+              <option value={StalkRoot.RHIZOMORPHS}>Rizomorfos</option>
+              <option value={StalkRoot.ROOTED}>Enraizada</option>
+              <option value={StalkRoot.MISSING}>Ausente</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-surface-above-ring">
+              Superfície do Estipe Acima do Anel
+            </label>
+            <select onChange={onSelectHandler} id="stalk-surface-above-ring">
+              <option value={StalkSurfaceAboveRing.FIBROUS}>Fibrosa</option>
+              <option value={StalkSurfaceAboveRing.SCALY}>Escamosa</option>
+              <option value={StalkSurfaceAboveRing.SILKY}>Sedosa</option>
+              <option value={StalkSurfaceAboveRing.SMOOTH}>Lisa</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="odor">Odor</label>
-          <select onChange={onSelectHandler} id="odor">
-            <option value={Odor.ALMOND}>Amêndoa</option>
-            <option value={Odor.ANISE}>Anis</option>
-            <option value={Odor.CREOSOTE}>Creosoto</option>
-            <option value={Odor.FISHY}>De Peixe</option>
-            <option value={Odor.FOUL}>Fétido</option>
-            <option value={Odor.MUSTY}>Mofado</option>
-            <option value={Odor.NONE}>Nenhum</option>
-            <option value={Odor.PUNGENT}>Acre</option>
-            <option value={Odor.SPICY}>Picante</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-surface-below-ring">
+              Superfície do Estipe Abaixo do Anel
+            </label>
+            <select onChange={onSelectHandler} id="stalk-surface-below-ring">
+              <option value={StalkSurfaceBelowRing.FIBROUS}>Fibrosa</option>
+              <option value={StalkSurfaceBelowRing.SCALY}>Escamosa</option>
+              <option value={StalkSurfaceBelowRing.SILKY}>Sedosa</option>
+              <option value={StalkSurfaceBelowRing.SMOOTH}>Lisa</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-color-above-ring">
+              Cor do Estipe Acima do Anel
+            </label>
+            <select onChange={onSelectHandler} id="stalk-color-above-ring">
+              <option value={StalkColorAboveRing.BROWN}>Marrom</option>
+              <option value={StalkColorAboveRing.BUFF}>Bege</option>
+              <option value={StalkColorAboveRing.CINNAMON}>Canela</option>
+              <option value={StalkColorAboveRing.GRAY}>Cinza</option>
+              <option value={StalkColorAboveRing.ORANGE}>Laranja</option>
+              <option value={StalkColorAboveRing.PINK}>Rosa</option>
+              <option value={StalkColorAboveRing.RED}>Vermelho</option>
+              <option value={StalkColorAboveRing.WHITE}>Branco</option>
+              <option value={StalkColorAboveRing.YELLOW}>Amarelo</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="stalk-color-below-ring">
+              Cor do Estipe Abaixo do Anel
+            </label>
+            <select onChange={onSelectHandler} id="stalk-color-below-ring">
+              <option value={StalkColorBelowRing.BROWN}>Marrom</option>
+              <option value={StalkColorBelowRing.BUFF}>Bege</option>
+              <option value={StalkColorBelowRing.CINNAMON}>Canela</option>
+              <option value={StalkColorBelowRing.GRAY}>Cinza</option>
+              <option value={StalkColorBelowRing.ORANGE}>Laranja</option>
+              <option value={StalkColorBelowRing.PINK}>Rosa</option>
+              <option value={StalkColorBelowRing.RED}>Vermelho</option>
+              <option value={StalkColorBelowRing.WHITE}>Branco</option>
+              <option value={StalkColorBelowRing.YELLOW}>Amarelo</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div>
-        <div className="select_wrapper">
-          <label htmlFor="gill-attachment">Anexo das Lamelas</label>
-          <select onChange={onSelectHandler} id="gill-attachment">
-            <option value={GillAttachment.ATTACHED}>Anexadas</option>
-            <option value={GillAttachment.DESCENDING}>Descendentes</option>
-            <option value={GillAttachment.FREE}>Livres</option>
-            <option value={GillAttachment.NOTCHED}>Entalhadas</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="veil-type">Tipo de Véu</label>
+            <select onChange={onSelectHandler} id="veil-type">
+              <option value={VeilType.PARTIAL}>Parcial</option>
+              <option value={VeilType.UNIVERSAL}>Universal</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="veil-color">Cor do Véu</label>
+            <select onChange={onSelectHandler} id="veil-color">
+              <option value={VeilColor.BROWN}>Marrom</option>
+              <option value={VeilColor.ORANGE}>Laranja</option>
+              <option value={VeilColor.WHITE}>Branco</option>
+              <option value={VeilColor.YELLOW}>Amarelo</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="ring-number">Número do Anel</label>
+            <select onChange={onSelectHandler} id="ring-number">
+              <option value={RingNumber.NONE}>Nenhum</option>
+              <option value={RingNumber.ONE}>Um</option>
+              <option value={RingNumber.TWO}>Dois</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="gill-spacing">Espaçamento das Lamelas</label>
-          <select onChange={onSelectHandler} id="gill-spacing">
-            <option value={GillSpacing.CLOSE}>Próximas</option>
-            <option value={GillSpacing.CROWDED}>Aglomeradas</option>
-            <option value={GillSpacing.DISTANT}>Distantes</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="ring-type">Tipo de Anel</label>
+            <select onChange={onSelectHandler} id="ring-type">
+              <option value={RingType.EVANESCENT}>Evanescente</option>
+              <option value={RingType.FLARING}>Alargado</option>
+              <option value={RingType.LARGE}>Grande</option>
+              <option value={RingType.NONE}>Nenhum</option>
+              <option value={RingType.PENDANT}>Pendente</option>
+              <option value={RingType.SHEATHING}>Envoltório</option>
+              <option value={RingType.ZONE}>Zona</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="spore-print-color">
+              Cor da Impressão de Esporos
+            </label>
+            <select onChange={onSelectHandler} id="spore-print-color">
+              <option value={SporePrintColor.BLACK}>Preta</option>
+              <option value={SporePrintColor.BROWN}>Marrom</option>
+              <option value={SporePrintColor.BUFF}>Bege</option>
+              <option value={SporePrintColor.CHOCOLATE}>Chocolate</option>
+              <option value={SporePrintColor.GREEN}>Verde</option>
+              <option value={SporePrintColor.ORANGE}>Laranja</option>
+              <option value={SporePrintColor.PURPLE}>Roxa</option>
+              <option value={SporePrintColor.WHITE}>Branca</option>
+              <option value={SporePrintColor.YELLOW}>Amarela</option>
+            </select>
+          </div>
+          <div className="select_wrapper">
+            <label htmlFor="population">População</label>
+            <select onChange={onSelectHandler} id="population">
+              <option value={Population.ABUNDANT}>Abundante</option>
+              <option value={Population.CLUSTERED}>Agrupada</option>
+              <option value={Population.NUMEROUS}>Numerosa</option>
+              <option value={Population.SCATTERED}>Espalhada</option>
+              <option value={Population.SEVERAL}>Várias</option>
+              <option value={Population.SOLITARY}>Solitária</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="gill-size">Tamanho das Lamelas</label>
-          <select onChange={onSelectHandler} id="gill-size">
-            <option value={GillSize.BROAD}>Largas</option>
-            <option value={GillSize.NARROW}>Estreitas</option>
-          </select>
+        <div>
+          <div className="select_wrapper">
+            <label htmlFor="habitat">Habitat</label>
+            <select onChange={onSelectHandler} id="habitat">
+              <option value={Habitat.GRASSES}>Grama</option>
+              <option value={Habitat.LEAVES}>Folhas</option>
+              <option value={Habitat.MEADOWS}>Prados</option>
+              <option value={Habitat.PATHS}>Caminhos</option>
+              <option value={Habitat.URBAN}>Urbano</option>
+              <option value={Habitat.WASTE}>Lixo</option>
+              <option value={Habitat.WOODS}>Florestas</option>
+            </select>
+          </div>
         </div>
-        <div className="select_wrapper">
-          <label htmlFor="gill-color">Cor das Lamelas</label>
-          <select onChange={onSelectHandler} id="gill-color">
-            <option value={GillColor.BLACK}>Pretas</option>
-            <option value={GillColor.BROWN}>Marrons</option>
-            <option value={GillColor.BUFF}>Bege</option>
-            <option value={GillColor.CHOCOLATE}>Chocolate</option>
-            <option value={GillColor.GRAY}>Cinza</option>
-            <option value={GillColor.GREEN}>Verdes</option>
-            <option value={GillColor.ORANGE}>Laranjas</option>
-            <option value={GillColor.PINK}>Rosas</option>
-            <option value={GillColor.PURPLE}>Roxas</option>
-            <option value={GillColor.RED}>Vermelhas</option>
-            <option value={GillColor.WHITE}>Brancas</option>
-            <option value={GillColor.YELLOW}>Amarelas</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-shape">Formato do Estipe</label>
-          <select onChange={onSelectHandler} id="stalk-shape">
-            <option value={StalkShape.ENLARGING}>Alargando</option>
-            <option value={StalkShape.TAPERING}>Afunilando</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-root">Raiz do Estipe</label>
-          <select onChange={onSelectHandler} id="stalk-root">
-            <option value={StalkRoot.BULBOUS}>Bolbosa</option>
-            <option value={StalkRoot.CLUB}>Clubada</option>
-            <option value={StalkRoot.CUP}>Em Forma de Copo</option>
-            <option value={StalkRoot.EQUAL}>Igual</option>
-            <option value={StalkRoot.RHIZOMORPHS}>Rizomorfos</option>
-            <option value={StalkRoot.ROOTED}>Enraizada</option>
-            <option value={StalkRoot.MISSING}>Ausente</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-surface-above-ring">
-            Superfície do Estipe Acima do Anel
-          </label>
-          <select onChange={onSelectHandler} id="stalk-surface-above-ring">
-            <option value={StalkSurfaceAboveRing.FIBROUS}>Fibrosa</option>
-            <option value={StalkSurfaceAboveRing.SCALY}>Escamosa</option>
-            <option value={StalkSurfaceAboveRing.SILKY}>Sedosa</option>
-            <option value={StalkSurfaceAboveRing.SMOOTH}>Lisa</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-surface-below-ring">
-            Superfície do Estipe Abaixo do Anel
-          </label>
-          <select onChange={onSelectHandler} id="stalk-surface-below-ring">
-            <option value={StalkSurfaceBelowRing.FIBROUS}>Fibrosa</option>
-            <option value={StalkSurfaceBelowRing.SCALY}>Escamosa</option>
-            <option value={StalkSurfaceBelowRing.SILKY}>Sedosa</option>
-            <option value={StalkSurfaceBelowRing.SMOOTH}>Lisa</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-color-above-ring">
-            Cor do Estipe Acima do Anel
-          </label>
-          <select onChange={onSelectHandler} id="stalk-color-above-ring">
-            <option value={StalkColorAboveRing.BROWN}>Marrom</option>
-            <option value={StalkColorAboveRing.BUFF}>Bege</option>
-            <option value={StalkColorAboveRing.CINNAMON}>Canela</option>
-            <option value={StalkColorAboveRing.GRAY}>Cinza</option>
-            <option value={StalkColorAboveRing.ORANGE}>Laranja</option>
-            <option value={StalkColorAboveRing.PINK}>Rosa</option>
-            <option value={StalkColorAboveRing.RED}>Vermelho</option>
-            <option value={StalkColorAboveRing.WHITE}>Branco</option>
-            <option value={StalkColorAboveRing.YELLOW}>Amarelo</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="stalk-color-below-ring">
-            Cor do Estipe Abaixo do Anel
-          </label>
-          <select onChange={onSelectHandler} id="stalk-color-below-ring">
-            <option value={StalkColorBelowRing.BROWN}>Marrom</option>
-            <option value={StalkColorBelowRing.BUFF}>Bege</option>
-            <option value={StalkColorBelowRing.CINNAMON}>Canela</option>
-            <option value={StalkColorBelowRing.GRAY}>Cinza</option>
-            <option value={StalkColorBelowRing.ORANGE}>Laranja</option>
-            <option value={StalkColorBelowRing.PINK}>Rosa</option>
-            <option value={StalkColorBelowRing.RED}>Vermelho</option>
-            <option value={StalkColorBelowRing.WHITE}>Branco</option>
-            <option value={StalkColorBelowRing.YELLOW}>Amarelo</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <div className="select_wrapper">
-          <label htmlFor="veil-type">Tipo de Véu</label>
-          <select onChange={onSelectHandler} id="veil-type">
-            <option value={VeilType.PARTIAL}>Parcial</option>
-            <option value={VeilType.UNIVERSAL}>Universal</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="veil-color">Cor do Véu</label>
-          <select onChange={onSelectHandler} id="veil-color">
-            <option value={VeilColor.BROWN}>Marrom</option>
-            <option value={VeilColor.ORANGE}>Laranja</option>
-            <option value={VeilColor.WHITE}>Branco</option>
-            <option value={VeilColor.YELLOW}>Amarelo</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="ring-number">Número do Anel</label>
-          <select onChange={onSelectHandler} id="ring-number">
-            <option value={RingNumber.NONE}>Nenhum</option>
-            <option value={RingNumber.ONE}>Um</option>
-            <option value={RingNumber.TWO}>Dois</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="ring-type">Tipo de Anel</label>
-          <select onChange={onSelectHandler} id="ring-type">
-            <option value={RingType.EVANESCENT}>Evanescente</option>
-            <option value={RingType.FLARING}>Alargado</option>
-            <option value={RingType.LARGE}>Grande</option>
-            <option value={RingType.NONE}>Nenhum</option>
-            <option value={RingType.PENDANT}>Pendente</option>
-            <option value={RingType.SHEATHING}>Envoltório</option>
-            <option value={RingType.ZONE}>Zona</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <div className="select_wrapper">
-          <label htmlFor="spore-print-color">Cor da Impressão de Esporos</label>
-          <select onChange={onSelectHandler} id="spore-print-color">
-            <option value={SporePrintColor.BLACK}>Preta</option>
-            <option value={SporePrintColor.BROWN}>Marrom</option>
-            <option value={SporePrintColor.BUFF}>Bege</option>
-            <option value={SporePrintColor.CHOCOLATE}>Chocolate</option>
-            <option value={SporePrintColor.GREEN}>Verde</option>
-            <option value={SporePrintColor.ORANGE}>Laranja</option>
-            <option value={SporePrintColor.PURPLE}>Roxa</option>
-            <option value={SporePrintColor.WHITE}>Branca</option>
-            <option value={SporePrintColor.YELLOW}>Amarela</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="population">População</label>
-          <select onChange={onSelectHandler} id="population">
-            <option value={Population.ABUNDANT}>Abundante</option>
-            <option value={Population.CLUSTERED}>Agrupada</option>
-            <option value={Population.NUMEROUS}>Numerosa</option>
-            <option value={Population.SCATTERED}>Espalhada</option>
-            <option value={Population.SEVERAL}>Várias</option>
-            <option value={Population.SOLITARY}>Solitária</option>
-          </select>
-        </div>
-        <div className="select_wrapper">
-          <label htmlFor="habitat">Habitat</label>
-          <select onChange={onSelectHandler} id="habitat">
-            <option value={Habitat.GRASSES}>Grama</option>
-            <option value={Habitat.LEAVES}>Folhas</option>
-            <option value={Habitat.MEADOWS}>Prados</option>
-            <option value={Habitat.PATHS}>Caminhos</option>
-            <option value={Habitat.URBAN}>Urbano</option>
-            <option value={Habitat.WASTE}>Lixo</option>
-            <option value={Habitat.WOODS}>Florestas</option>
-          </select>
-        </div>
-      </div>
-      <button>Enviar Dados</button>
-    </form>
+        <button>Enviar Dados</button>
+      </form>
+
+      <section>
+        <Examples
+          setPoisonousExample={setPoisonousExample}
+          setEdibleExample={setEdibleExample}
+        />
+      </section>
+    </>
   );
 };

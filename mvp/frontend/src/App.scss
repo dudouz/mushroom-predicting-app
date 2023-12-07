@@ -1,4 +1,5 @@
 #root {
+  font-weight: 500;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -41,6 +42,7 @@
   color: #888;
 }
 main {
+  font-family: "Nunito", sans-serif;
   section {
     margin: 2em 0;
     form {
@@ -53,10 +55,6 @@ main {
         display: flex;
         gap: 1rem;
       }
-      .select_wrapper {
-        display: flex;
-        flex-direction: column;
-      }
     }
   }
 }
@@ -67,5 +65,157 @@ main {
   span {
     font-size: 0.65rem;
     font-weight: bold;
+  }
+}
+
+.main-image {
+  h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 900;
+    font-size: 4rem;
+  }
+  img {
+    border-radius: 900px;
+  }
+}
+
+.mushroom-form {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  .select_wrapper {
+    display: flex;
+    flex-direction: column;
+
+    select {
+      min-width: 350px;
+      position: relative;
+      appearance: none;
+      /*  safari  */
+      -webkit-appearance: none;
+      /*  other styles for aesthetics */
+      width: 100%;
+      font-size: 1.15rem;
+      padding: 0.675em 6em 0.675em 1em;
+      background-color: #fff;
+      border: 1px solid #caced1;
+      border-radius: 0.25rem;
+      color: #000;
+      cursor: pointer;
+    }
+
+    select::before,
+    select::after {
+      --size: 0.3rem;
+      content: "";
+      position: absolute;
+      right: 1rem;
+      pointer-events: none;
+    }
+
+    .select::before {
+      border-left: var(--size) solid transparent;
+      border-right: var(--size) solid transparent;
+      border-bottom: var(--size) solid black;
+      top: 40%;
+    }
+
+    .select::after {
+      border-left: var(--size) solid transparent;
+      border-right: var(--size) solid transparent;
+      border-top: var(--size) solid black;
+      top: 55%;
+    }
+  }
+}
+
+.evaluation-results {
+  img {
+    border-radius: 900px;
+  }
+  h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 900;
+    font-size: 4rem;
+  }
+  p {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #3dda2c;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #3dda2c;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
   }
 }
