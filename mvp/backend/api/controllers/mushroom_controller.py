@@ -5,34 +5,38 @@ from ml.predictor import Predictor
 from ml.loader import Loader
 import numpy as np
 
-def evaluate_mushroom(data):
-    print('evaluate_mushroom')
-    loader = Loader()
-    predictor = Predictor()
+class MushroomController:
+    def __init__(self, data):
+        self.data = data
 
-    model = loader.load_model('ml/model/modelo_eduardo_mushrooms.pkl')
-    
-    new_data = convert_case(data)
-    
-    data_serialized = MushroomSchema.MushroomSchema(**new_data)
+    def evaluate_mushroom(self):
+        print('evaluate_mushroom')
+        loader = Loader()
+        predictor = Predictor()
 
-    data_converted = convert_data_to_array(data_serialized.dict())
+        model = loader.load_model('ml/model/modelo_eduardo_mushrooms.pkl')
+        
+        new_data = self.convert_case(self.data)
+        
+        data_serialized = MushroomSchema.MushroomSchema(**new_data)
 
-    result = predictor.predict(model, data_converted)
-    
-    return result
+        data_converted = self.convert_data_to_array(data_serialized.dict())
 
-def convert_case(object):
-    new_object = {}
-    for key in object:
-        new_object[snakecase(key)] = object[key]
+        result = predictor.predict(model, data_converted)
+        
+        return result
 
-    return new_object
+    def convert_case(self, object):
+        new_object = {}
+        for key in object:
+            new_object[snakecase(key)] = object[key]
 
-def convert_data_to_array(data):
-    new_data = {}
+        return new_object
 
-    for key in data:
-        new_data[snakecase(key)] = [data[key]]
+    def convert_data_to_array(self, data):
+        new_data = {}
 
-    return new_data
+        for key in data:
+            new_data[snakecase(key)] = [data[key]]
+
+        return new_data
