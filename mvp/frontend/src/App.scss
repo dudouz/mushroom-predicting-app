@@ -151,6 +151,31 @@ main {
   }
 }
 
+.examples-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  .cards-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+
+    div {
+      flex: 1;
+      border: solid 1px transparent;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      transition: all 0.25s ease-in-out;
+      box-shadow: unset;
+
+      &:hover {
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        border: solid 1px #3dda2c;
+      }
+    }
+  }
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

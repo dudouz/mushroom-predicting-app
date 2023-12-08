@@ -16,17 +16,19 @@ export const Examples: React.FC<ExamplesProps> = ({
         o modelo mais rapidamente:
       </p>
 
-      <div>
-        <h3>Amanita Muscaria</h3>
-        <p>Venenoso</p>
+      <div className="cards-wrapper">
+        <div>
+          <h3>Amanita Muscaria</h3>
+          <p>Venenoso</p>
 
-        <button onClick={setPoisonousExample}>Avaliar</button>
-      </div>
-      <div>
-        <h3>Agaricus Campestris</h3>
-        <p>Comestível</p>
+          <button onClick={setPoisonousExample}>Avaliar</button>
+        </div>
+        <div>
+          <h3>Agaricus Campestris</h3>
+          <p>Comestível</p>
 
-        <button onClick={setEdibleExample}>Avaliar</button>
+          <button onClick={setEdibleExample}>Avaliar</button>
+        </div>
       </div>
     </div>
   );
