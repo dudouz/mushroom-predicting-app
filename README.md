@@ -1,4 +1,4 @@
-![Avaliador de cogumelos](https://github.com/dudouz/mvp-4/blob/master/mvp/frontend/public/android-chrome-512x512.png)
+![Avaliador de cogumelos](https://github.com/dudouz/mvp-4/blob/master/mvp/frontend/public/android-chrome-192x192.png)
 
 # Avaliador de Cogumelos
 
