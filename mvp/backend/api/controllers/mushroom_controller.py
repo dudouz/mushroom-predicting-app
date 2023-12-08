@@ -19,8 +19,6 @@ def evaluate_mushroom(data):
     data_converted = convert_data_to_array(data_serialized.dict())
 
     result = predictor.predict(model, data_converted)
-
-    print(result)
     
     return result
 
