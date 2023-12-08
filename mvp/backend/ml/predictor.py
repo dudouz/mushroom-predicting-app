@@ -1,13 +1,13 @@
 import numpy as np
 from ml.preprocessor import Preprocessor
-from stringcase import spinalcase
-
+from utils import Utils
 
 class Predictor:
     def predict(self, model, data):
+        utils = Utils()
         preprocessor = Preprocessor()
 
-        normalized_columns_names = self.convert_case(data)
+        normalized_columns_names = utils.convert_spinalcase(data)
 
         data_converted = preprocessor.normalize_dataframe(normalized_columns_names)
 
@@ -16,11 +16,3 @@ class Predictor:
             return 'Poisonous'
         else:
             return 'Edible'
-
-        
-    def convert_case(self, object):
-        new_object = {}
-        for key in object:
-            new_object[spinalcase(key)] = object[key]
-
-        return new_object

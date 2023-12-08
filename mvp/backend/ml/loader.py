@@ -5,9 +5,6 @@ import pickle
 import joblib
 
 class  Loader:
-    def __init__(self):
-        pass
-
     def load_dataset(self, id):
         dataset_base = fetch_ucirepo(id=id)
 
