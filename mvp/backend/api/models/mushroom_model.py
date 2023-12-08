@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class Mushroom(Base):
+class MushroomModel(Base):
     __tablename__ = 'mushrooms'
 
     id = Column(Integer, primary_key=True)
