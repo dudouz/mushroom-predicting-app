@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: ./mvp/frontend
+    volumes:
+      - ./mvp/frontend:/frontend
+    command: yarn preview --host
+    ports:
+      - "4173:4173"
+
+  backend:
+    build:
+      context: ./mvp/backend
+    volumes:
+      - ./mvp/backend:/backend
+    command: flask --app app run --debug --host 0.0.0.0
+    ports:
+      - "5000:5000"
