@@ -88,3 +88,27 @@ Independente do meio que você escolheu, nossos apps estarão disponíveis nas s
 #### Swagger
 
 [http://localhost:5000/openapi](http://localhost:5000/openapi)
+
+# Rodando testes
+
+Nosso back-end conta com testes para validar a eficácia do modelo fornecido. Estamos assumindo um critério alto para este preditor, esperando uma acurácia de 98% ou mais.
+
+Para rodar os testes, entre na pasta `/mvp/backend/` execute o comando a seguir para isolar seu build em um ambiente virtual:
+
+```shell
+foo@bash:~$ python3 -m venv venv; source venv/bin/activate
+```
+
+Usando o `;` nós rodamos um comando após a finalização do outro :)
+
+Após isso, ainda na pasta `/mvp/backend` instale as dependências do projeto:
+
+```shell
+foo@bash:~$ pip install -r requirements.txt
+```
+
+Após isso, ainda na pasta `/mvp/backend` execute o pytest e aguarde o output:
+
+```shell
+foo@bash:~$ pytest
+```
