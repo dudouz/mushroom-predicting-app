@@ -15,11 +15,21 @@ class  Loader:
 
         return data
     
-    def load_model(self, model_name):
-        if model_name.endswith('.pkl'):
-             model = pickle.load(open(model_name, 'rb'))
-        elif model_name.endswith('.joblib'):
-            model = joblib.load(model_name)
+    def load_model(self, model_path):
+        if model_path.endswith('.pkl'):
+             model = pickle.load(open(model_path, 'rb'))
+        elif model_path.endswith('.joblib'):
+            model = joblib.load(model_path)
         else:
             raise ValueError('Unsupported model file extension')
         return model
+    
+    def load_encoder(self, encoder_path):
+        with open(encoder_path, 'rb') as f:
+            encoder = pickle.load(f)
+        return encoder
+    
+    def load_scaler(self, scaler_path):
+        with open(scaler_path, 'rb') as f:
+            scaler = pickle.load(f)
+        return scaler
