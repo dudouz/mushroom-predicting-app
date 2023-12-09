@@ -2,6 +2,7 @@ import pandas as pd
 import pickle
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
+from ml.loader import Loader
 
 class Preprocessor:
     def normalize_dataframe(self, X, y):
@@ -36,11 +37,9 @@ class Preprocessor:
         columns = ['cap-shape', 'cap-surface', 'cap-color', 'bruises', 'odor', 'gill-attachment', 'gill-spacing', 'gill-size', 'gill-color', 'stalk-shape', 'stalk-root', 'stalk-surface-above-ring', 'stalk-surface-below-ring', 'stalk-color-above-ring', 'stalk-color-below-ring', 'veil-type', 'veil-color', 'ring-number', 'ring-type', 'spore-print-color', 'population', 'habitat']
 
         # Carregar onehot_encoder e scaler pré-treinados
-        with open('ml/model/onehot_encoder.pkl', 'rb') as f:
-            onehot_encoder = pickle.load(f)
-
-        with open('ml/model/scaler.pkl', 'rb') as f:
-            scaler = pickle.load(f)
+        loader = Loader()
+        scaler = loader.load_scaler('ml/model/scaler.pkl')
+        onehot_encoder = loader.load_encoder('ml/model/onehot_encoder.pkl')
 
         dataframe = pd.DataFrame(data, columns=columns)
         dataframe_encoded = onehot_encoder.transform(dataframe)
