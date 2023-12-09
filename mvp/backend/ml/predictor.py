@@ -7,11 +7,11 @@ class Predictor:
         utils = Utils()
         preprocessor = Preprocessor()
 
-        normalized_columns_names = utils.convert_spinalcase(data)
+        data_converted = utils.convert_spinalcase(data)
 
-        data_converted = preprocessor.normalize_dataframe(normalized_columns_names)
+        data_normalized = preprocessor.normalize_input(data_converted)
 
-        result = model.predict(data_converted)
+        result = model.predict(data_normalized)
         if result[0] == 1:
             return 'Poisonous'
         else:
