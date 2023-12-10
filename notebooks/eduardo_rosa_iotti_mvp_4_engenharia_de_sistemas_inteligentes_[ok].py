@@ -38,6 +38,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 
 # instala o pacote para obter o dataset:
+!pip3 install -U ucimlrepo
 from ucimlrepo import fetch_ucirepo
 
 # instala pickle para exportar o modelo treinado:
@@ -63,29 +64,26 @@ data = pd.read_csv(dataset_base.metadata.data_url)
 X = data.drop('poisonous', axis=1)
 y = data['poisonous']
 
-# Como nossas colunas apresentam dados qualitativos representados por iniciais (ou algo similar) de cada
-# característica a ser avaliada, utilizaremos o LabelEncoder para nosso alvo de predição e o
-# OneHotEncoder para nossas colunas de características.
+
+# Como nossas colunas apresentam dados qualitativos representados por iniciais (ou algo similar)
+# de cada # característica a ser avaliada, utilizaremos o LabelEncoder para nosso\
+# alvo de predição (binário) e o OneHotEncoder para nossas colunas de características.
 
 # Codificar os rótulos categóricos usando o LabelEncoder
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
 
 # Codificar as características categóricas em X usando OneHotEncoder
-onehot_encoder = OneHotEncoder(sparse=False, drop='first')
+onehot_encoder = OneHotEncoder(sparse=False, drop=None, handle_unknown='ignore')
 X_encoded = onehot_encoder.fit_transform(X)
-
-# Normalizar os dados usando o StandardScaler
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_encoded)
 
 test_size = 0.20 # tamanho do conjunto de teste
 seed = 7 # semente aleatória
 
 # Dividir o conjunto de dados em conjuntos de treinamento e teste
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_encoded, y_encoded, test_size=0.2, random_state=42)
 
-# Parâmetros e partições da validação cruzada
+# Parâmetros e partições da validação cruzada ten fold
 scoring = 'accuracy'
 num_particoes = 10
 kfold = StratifiedKFold(n_splits=num_particoes, shuffle=True, random_state=seed) # validação cruzada com estratificação
@@ -126,56 +124,51 @@ plt.show()
 
 np.random.seed(7) # definindo uma semente global para este bloco
 
-# Pegamos cada algoritimo já especificado no array de modelos do bloco anterior:
-# Verificamos a integridade das informações do array de modelos e o indice de cada algoritimo:
-for index, (name, model) in enumerate(models):
-  print(f"Modelo: {name}, Indice no array: {index} ", model)
-
-print('--------------------------------------------------------------------------------')
-
-# Criamos as variaveis de acordo com o output interior
-knn = models[0]
-cart = models[1]
-naive_bayes = models[2]
-svm = models[3]
-
-# Declaramos os transformers a serem utilizados:
-standard_scaler = ('StandardScaler', StandardScaler())
-min_max_scaler = ('MinMaxScaler', MinMaxScaler())
-
 # Listas para armazenar os armazenar os pipelines e os resultados para todas as visões do dataset
 pipelines = []
 results = []
 names = []
 
+
+# Criando os elementos do pipeline
+
+# Algoritmos que serão utilizados
+knn = ('KNN', KNeighborsClassifier())
+cart = ('CART', DecisionTreeClassifier())
+naive_bayes = ('NB', GaussianNB())
+svm = ('SVM', SVC())
+
+# Transformações que serão utilizadas
+standard_scaler = ('StandardScaler', StandardScaler())
+min_max_scaler = ('MinMaxScaler', MinMaxScaler())
+
 # Montando os pipelines
 
-# Dataset original:
-for index, (name, model) in enumerate(models):
-  model_label = f"{name}-orig"
-  tuple = (model_label, Pipeline([models[index]]))
-  pipelines.append(tuple)
+# Dataset original
+pipelines.append(('KNN-orig', Pipeline([knn])))
+pipelines.append(('CART-orig', Pipeline([cart])))
+pipelines.append(('NB-orig', Pipeline([naive_bayes])))
+pipelines.append(('SVM-orig', Pipeline([svm])))
 
 # Dataset Padronizado
-for index, (name, model) in enumerate(models):
-  model_label = f"{name}-std"
-  tuple = (model_label, Pipeline([standard_scaler, models[index]]))
-  pipelines.append(tuple)
+pipelines.append(('KNN-padr', Pipeline([standard_scaler, knn])))
+pipelines.append(('CART-padr', Pipeline([standard_scaler, cart])))
+pipelines.append(('NB-padr', Pipeline([standard_scaler, naive_bayes])))
+pipelines.append(('SVM-padr', Pipeline([standard_scaler, svm])))
 
-
-# # Dataset Normalizado
-for index, (name, model) in enumerate(models):
-  model_label = f"{name}-norm"
-  tuple = (model_label, Pipeline([min_max_scaler, models[index]]))
-  pipelines.append(tuple)
+# Dataset Normalizado
+pipelines.append(('KNN-norm', Pipeline([min_max_scaler, knn])))
+pipelines.append(('CART-norm', Pipeline([min_max_scaler, cart])))
+pipelines.append(('NB-norm', Pipeline([min_max_scaler, naive_bayes])))
+pipelines.append(('SVM-norm', Pipeline([min_max_scaler, svm])))
 
 # Executando os pipelines
 for name, model in pipelines:
     cv_results = cross_val_score(model, X_train, y_train, cv=kfold, scoring=scoring)
     results.append(cv_results)
     names.append(name)
-    result = f"Algoritimo: {name}, Média: {cv_results.mean():.3f}, Desvio: {cv_results.std():.3f}"
-    print(result)
+    msg = "%s: %.3f (%.3f)" % (name, cv_results.mean(), cv_results.std()) # formatando para 3 casas decimais
+    print(msg)
 
 # Boxplot de comparação dos modelos
 fig = plt.figure(figsize=(25,6))
@@ -202,8 +195,19 @@ pipelines.append(('knn-orig', Pipeline(steps=[knn])))
 pipelines.append(('knn-padr', Pipeline(steps=[standard_scaler, knn])))
 pipelines.append(('knn-norm', Pipeline(steps=[min_max_scaler, knn])))
 
+# Este param_grid_old foi criado para termos mais opções de parâmetros, porém gerou um resultado bem semelhante aos
+# parametros sugeridos pelo exemplo mostrado em aula e apresentou um tempo de execução de 30 min, desta forma
+# optei pela opção que executava mais rápido.
+
+# param_grid_old = {
+#     'KNN__n_neighbors': [5, 10, 15, 20],
+#     'KNN__metric': ["euclidean", "manhattan", "minkowski"],
+#     'KNN__weights': ['uniform', 'distance'],
+#     'KNN__algorithm': ["auto", "ball_tree", "kd_tree", "brute"]
+# }
+
 param_grid = {
-    'KNN__n_neighbors': [1,3,5,7,9,11,13,15,17,19,21],
+    'KNN__n_neighbors': [15, 20, 35, 50, 100],
     'KNN__metric': ["euclidean", "manhattan", "minkowski"],
 }
 
@@ -213,19 +217,23 @@ for name, model in pipelines:
     grid.fit(X_train, y_train)
 
     # Aponta a melhor configuração:
-    print(f"Sem tratamento de missings: {name} - Melhor Score: {grid.best_score_} usando {grid.best_params_}")
+    print(f"Sem tratamento de missings: {name}")
+    print(f"Melhor Score: {grid.best_score_} usando {grid.best_params_}")
+
+    # Obtendo os melhores parâmetros encontrados
+    best_params = grid.best_params_
+    print(f"Melhores Parâmetros: {name}", best_params)
+
+    # Avaliando o desempenho no conjunto de teste
+    accuracy = grid.score(X_test, y_test)
+    print(f"Acurácia no Conjunto de Teste: {name}", accuracy)
 
 """# **Finalização** do Modelo"""
-
-# Avaliação do modelo com o conjunto de testes
 
 # Preparação do modelo
 scaler = StandardScaler().fit(X_train) # ajuste do scaler com o conjunto de treino
 rescaledX = scaler.transform(X_train) # aplicação da padronização no conjunto de treino
-
-# Selecionamos o KNN como modelo treinado, com a métrica manhattan
-# Desta forma definimos o modelo abaixo:
-model = KNeighborsClassifier(metric='manhattan', n_neighbors=17)
+model = KNeighborsClassifier(metric='euclidean', n_neighbors=5)
 model.fit(rescaledX, y_train)
 
 # Estimativa da acurácia no conjunto de teste
@@ -234,16 +242,19 @@ predictions = model.predict(rescaledTestX)
 print(accuracy_score(y_test, predictions))
 
 # Preparação do modelo com TODO o dataset
+onehot_encoder = OneHotEncoder(sparse=False, drop=None, handle_unknown='ignore')
+X_encoded = onehot_encoder.fit_transform(X)
+
+print(X_encoded)
+print(X_encoded.astype(float))
 scaler = StandardScaler().fit(X_encoded) # ajuste do scaler com TODO o dataset
+
 rescaledX = scaler.transform(X_encoded) # aplicação da padronização com TODO o dataset
 model.fit(rescaledX, y_encoded)
 
 """# Testando em **dados desconhecidos**"""
 
 # Novos dados - não sabemos a classe!
-
-# f,s,b,t,f,f,c,b,w,t,b,f,f,w,w,p,w,o,p,h,v,g,p < venenoso
-# f,f,e,t,n,f,c,b,w,t,b,s,s,g,w,p,w,o,p,k,v,d,e < comestível
 
 new_mushroom_data = {
     'cap-shape': ['x', 'f'],
@@ -297,6 +308,76 @@ print(output)
 # Declaramos aqui o nome do modelo, caminho local a salvarmos o arquivo
 # Assim como toda lógica para exportar o modelo treinado usando o pickle:
 
-model_name = "Modelo Treinado - Eduardo Rosa Iotti - KNN - Mushrooms.pkl"
+model_name = "Modelo Treinado - Eduardo Rosa Iotti - KNN - Mushrooms"
 
-pickle.dump(model, open(model_name, "wb"))
+pkl_artifact_filename = f"{model_name}.pkl"
+
+pkl_local_path = f"/content/{pkl_artifact_filename}"
+with open(pkl_local_path, "wb") as model_file:
+  pickle.dump(model, model_file)
+
+# Exportamos tambem os normalizadores, para trabalhar com dados novos seguindo
+# o mesmo encoding dos dados categóricos:
+
+with open('onehot_encoder.pkl', 'wb') as f:
+    pickle.dump(onehot_encoder, f)
+
+with open('scaler.pkl', 'wb') as f:
+    pickle.dump(scaler, f)
+
+"""# **Conclusões** gerais
+
+Bom, primeiramente, para mim este MVP foi o mais desafiador de todos, pois se tratava de um assunto totalmente novo para mim.
+
+Pude aprender bastante, mas acredito que se quiser seguir atuando nessa área específica, tenho um imenso caminho pela frente.
+
+## A **proposta**
+
+A ideia aqui foi utilizar um dataset de cogumelos para trazer uma predição da possibilidade dele ser comestível, baseado em suas características biológicas.
+
+## Um **grande desafio**
+
+Acredito que o ponto crucial aqui neste modelo é que os dados são categóricos e não quantitativos, por conta disso o desafio se tornou um pouco maior do que eu esperava.
+
+Além disso são 22 colunas de dados categóricos o que torna um pouco extensivo o teste, principalmente ao criar novos objetos a serem avaliados pelo modelo.
+
+Para sobrepor este desafio, precisei buscar uma solução de normalização dos dados, tanto de forma binária para a classe, quanto de forma decimal para as características.
+
+## **Construção e organização** dos dados
+
+ Para uma avaliação robusta, conforme sugerido em aula adotei uma validação cruzada com 10 partições estratificadas - ten fold.
+
+ Fazendo isso pude garantir que meu modelo foi exposto a diferentes conjuntos organizados de forma a evitar falsos positivos.
+
+## A Escolha do **modelo**
+
+Acabei optando pelo KNN que apresentou uma acurácia altíssima, tanto no tuning final quanto no treinamento.
+
+
+### O **fine tuning**: parâmetros diferentes
+
+No fine tuning eu divergi um pouco da orientação inicial, buscando expandir as alternativas e provocar o modelo para me trazer diferentes scores.
+
+Pesquisei um pouco na documentação e busquei explorar alguns parâmetros adicionais no tuning do KNN e obtive uma acurácia semelhante em todos os resultados, porém deixou este bloco um pouco demorado para ser executado: aproximadamente 30 minutos.
+
+Ao diminuir estes parametros e seguir algo mais próximo à orientação da aula, obtive resultados bem semelhantes e com tempo menor de execução. Priorizei esse setup mas mantive comentado o segundo param grid para fins ilustrativos.
+
+### **Fine tuning 2**: número de vizinhos considerados
+
+Ainda nessa ideia de experimentar percebi que o KNN ainda estava sempre considerando o menor numero de vizinhos possível, e que
+usar somente 1 vizinho pode trazer problemas de classificação, por termos uma base com mais de 8 mil exemplos, decidi aumentar o numero de vizinhos e o número final ficou 15 que é o menor número dentre as alternativas testadas.
+
+## Os **problemas** encontrados
+
+Ao confrontar o banco com dados novos tive alguns problemas com os dados categóricos. Algumas classificações eram consideradas desconhecidas pelo modelo e isso quebrava a predição.
+
+Utilizei um parâmetro no encoder das colunas de categorias para ignorar em caso de dados desconhecidos e o resultado foi satisfatório: ao testar com dados que sabíamos sua classe o sistema pareceu gerar resultados confiáveis.
+
+## Exports **complementares**
+
+Por fim, ao aplicar o modelo no meu sistema compreendi que precisaria utilizar os encoders e scalers já ajustados com os dados para normalizar, também, o input do usuário.
+
+## Sobre a **predição**
+
+Eu acredito que a predição está interessante, pois qualquer dado divergente de uma classificação muito próxima da classe comestível já é considerada venenosa.
+"""
