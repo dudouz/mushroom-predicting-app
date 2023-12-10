@@ -11,7 +11,12 @@ class  Loader:
         # verificar se a carga está correta, checando o nome do dataset
         print(f"Dataset loaded: {dataset_base.metadata.name}")
 
-        data = read_csv(dataset_base.metadata.data_url)
+        data = self.load_dataset_csv(dataset_base.metadata.data_url)
+
+        return data
+    
+    def load_dataset_csv(self, csv_path):
+        data = read_csv(csv_path)
 
         return data
     

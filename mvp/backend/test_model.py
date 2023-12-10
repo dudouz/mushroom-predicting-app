@@ -12,9 +12,8 @@ preprocessor = Preprocessor()
 # Parâmetros
 # Dataset utilizado: https://archive.ics.uci.edu/dataset/73/mushroom    
 dataset_id = 73
-data = loader.load_dataset(dataset_id)
-columns = data.columns.to_list()
-
+test_data = loader.load_dataset_csv('ml/data/mushroom-data-golden.csv')
+columns = test_data.columns.to_list()
 
 # Testes básicos
 def test_data_loader():
@@ -37,10 +36,10 @@ def test_column_names():
 # Precisão: % de positivos entre os identificados
 # F1: média harmônica entre recall e precisão
 
-min_accuracy = 0.97
-min_recall = 0.97
-min_precision = 0.97
-min_f1 = 0.97
+min_accuracy = 0.98
+min_recall = 0.98
+min_precision = 0.98
+min_f1 = 0.98
 
 # Testar Modelo
 def test_knn():
@@ -48,8 +47,8 @@ def test_knn():
    model_path = 'ml/model/modelo_eduardo_mushrooms.pkl'
    model = loader.load_model(model_path)
 
-   X = data.drop('poisonous', axis=1)
-   y = data['poisonous']
+   X = test_data.drop('poisonous', axis=1)
+   y = test_data['poisonous']
 
    # Preprocessamos os dados - para normalizar as colunas categóricas:
    X_scaled, y_encoded = preprocessor.normalize_dataframe(X, y)
