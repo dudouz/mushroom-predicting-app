@@ -1,31 +1,27 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from pydantic import BaseModel
+class MushroomBody(BaseModel):
+    cap_shape: str
+    cap_surface: str
+    cap_color: str
+    bruises: str
+    odor: str
+    gill_attachment: str
+    gill_spacing: str
+    gill_size: str
+    gill_color: str
+    stalk_shape: str
+    stalk_root: str
+    stalk_surface_above_ring: str
+    stalk_surface_below_ring: str
+    stalk_color_above_ring: str
+    stalk_color_below_ring: str
+    veil_type: str
+    veil_color: str
+    ring_number: str
+    ring_type: str
+    spore_print_color: str
+    population: str
+    habitat: str
 
-Base = declarative_base()
-
-class MushroomModel(Base):
-    __tablename__ = 'mushrooms'
-
-    id = Column(Integer, primary_key=True)
-    cap_shape = Column(String)
-    cap_surface = Column(String)
-    cap_color = Column(String)
-    bruises = Column(String)
-    odor = Column(String)
-    gill_attachment = Column(String)
-    gill_spacing = Column(String)
-    gill_size = Column(String)
-    gill_color = Column(String)
-    stalk_shape = Column(String)
-    stalk_root = Column(String)
-    stalk_surface_above_ring = Column(String)
-    stalk_surface_below_ring = Column(String)
-    stalk_color_above_ring = Column(String)
-    stalk_color_below_ring = Column(String)
-    veil_type = Column(String)
-    veil_color = Column(String)
-    ring_number = Column(String)
-    ring_type = Column(String)
-    spore_print_color = Column(String)
-    population = Column(String)
-    habitat = Column(String)
+    class Config:
+        orm_mode = True

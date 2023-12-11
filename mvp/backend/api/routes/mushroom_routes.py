@@ -2,6 +2,8 @@ from flask_openapi3 import Tag, APIBlueprint
 from flask import jsonify, request
 from logger import logger
 from api.controllers.mushroom_controller import MushroomController
+from api.models.mushroom_model import MushroomBody
+
 
 mushroom_tags = Tag(name='Mushrooms', description='Operações relacionadas a API de cogumelos venenosos')
 
@@ -12,7 +14,7 @@ mushroom_routes = APIBlueprint('mushroom', __name__, abp_tags=[mushroom_tags])
     "400": {"description": "Erro na requisição"},
     "500": {"description": "Erro no servidor"}
 })
-def evaluate():
+def evaluate(body: MushroomBody):
     data = request.json
     mushroom_controller = MushroomController(data)
 
