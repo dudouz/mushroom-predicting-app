@@ -1,27 +1,24 @@
 from pydantic import BaseModel
 class MushroomBody(BaseModel):
-    cap_shape: str
-    cap_surface: str
-    cap_color: str
+    capShape: str
+    capSurface: str
+    capColor: str
     bruises: str
     odor: str
-    gill_attachment: str
-    gill_spacing: str
-    gill_size: str
-    gill_color: str
-    stalk_shape: str
-    stalk_root: str
-    stalk_surface_above_ring: str
-    stalk_surface_below_ring: str
-    stalk_color_above_ring: str
-    stalk_color_below_ring: str
-    veil_type: str
-    veil_color: str
-    ring_number: str
-    ring_type: str
-    spore_print_color: str
+    gillAttachment: str
+    gillSpacing: str
+    gillSize: str
+    gillColor: str
+    stalkShape: str
+    stalkRoot: str
+    stalkSurfaceAboveRing: str
+    stalkSurfaceBelowRing: str
+    stalkColorAboveRing: str
+    stalkColorBelowRing: str
+    veilType: str
+    veilColor: str
+    ringNumber: str
+    ringType: str
+    sporePrintColor: str
     population: str
     habitat: str
-
-    class Config:
-        orm_mode = True

@@ -15,8 +15,8 @@ mushroom_routes = APIBlueprint('mushroom', __name__, abp_tags=[mushroom_tags])
     "500": {"description": "Erro no servidor"}
 })
 def evaluate(body: MushroomBody):
-    data = request.json
-    mushroom_controller = MushroomController(data)
+    body = request.json
+    mushroom_controller = MushroomController(body)
 
     try:
         logger.info("Requisição de avaliação de cogumelo recebida")
