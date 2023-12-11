@@ -149,7 +149,7 @@ enum RingNumber {
 }
 
 enum RingType {
-  // COBWEBBY = "c", // esse deu erro no treinamnento, nao é minha culpa.
+  COBWEBBY = "c",
   EVANESCENT = "e",
   FLARING = "f",
   LARGE = "l",
