@@ -6,16 +6,19 @@ from ml.loader import Loader
 
 class Preprocessor:
     def normalize_dataframe(self, X, y):
+        # Carregar onehot_encoder e scaler pré-treinados
+        loader = Loader()
+        scaler = loader.load_scaler('ml/model/scaler_ok.pkl')
+        onehot_encoder = loader.load_encoder('ml/model/onehot_encoder_ok.pkl')
+
         # Codificar a classe, pois ela é categórica
         label_encoder = LabelEncoder()
         y_encoded = label_encoder.fit_transform(y)
 
         # Codificar as variáveis categóricas
-        onehot_encoder = OneHotEncoder(sparse=False, drop=None, handle_unknown='ignore')
-        X_encoded = onehot_encoder.fit_transform(X)
+        X_encoded = onehot_encoder.transform(X)
 
-        # Normalizar os dados
-        scaler = StandardScaler()
+        # A normalização é necessária para um resultado otimizado acima dos 98% de acurácia
         X_scaled = scaler.fit_transform(X_encoded)
 
         return X_scaled, y_encoded
@@ -38,8 +41,8 @@ class Preprocessor:
 
         # Carregar onehot_encoder e scaler pré-treinados
         loader = Loader()
-        scaler = loader.load_scaler('ml/model/scaler.pkl')
-        onehot_encoder = loader.load_encoder('ml/model/onehot_encoder.pkl')
+        scaler = loader.load_scaler('ml/model/scaler_ok.pkl')
+        onehot_encoder = loader.load_encoder('ml/model/onehot_encoder_ok.pkl')
 
         dataframe = pd.DataFrame(data, columns=columns)
         dataframe_encoded = onehot_encoder.transform(dataframe)
