@@ -1,81 +1,79 @@
-![Avaliador de cogumelos](https://github.com/dudouz/mvp-4/blob/master/mvp/frontend/public/android-chrome-192x192.png)
+# Mushroom Evaluator
 
-# Avaliador de Cogumelos
+![Mushroom Evaluator](https://github.com/dudouz/mvp-4/blob/master/mvp/frontend/public/android-chrome-192x192.png)
 
-## MBA em Engenharia de Software - PUCRIO
+## MBA in Software Engineering - PUCRIO
 
-Olá, este é o quarto MVP do MBA em engenharia de software da PUCRIO.
+Hello, this is the fourth MVP of the MBA in Software Engineering at PUCRIO.
 
-Este exemplo consiste num sistema que faz uso de um modelo de aprendizado de máquina para realizar uma predição.
+This example consists of a system that uses a machine learning model to make predictions.
 
-A idéia aqui é avaliar um cogumelo de acordo com suas características em detalhe e, através disso, prever se ele
-é comestível ou venenoso.
+The idea here is to evaluate a mushroom based on its detailed characteristics and, through this, predict whether it is edible or poisonous.
 
-### Dataset utilizado
+### Used Dataset
 
-[mushroom - UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/73/mushroom)
+[Mushroom - UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/73/mushroom)
 
-# Instalação e uso
+# Installation and Usage
 
-Esta aplicação consite em dois módulos separados, um para o front-end e outro para o back-end.
+This application consists of two modules, one for the front-end and another for the back-end.
 
-Enquanto o front-end é desenvolvido em TypeScript, utilizando React, o back-end foi construído em Python e usa o framework flask.
+While the front-end is developed in TypeScript, using React, the back-end was built in Python and uses the Flask framework.
 
-Tenha em mente que precisamos de um ambiente de desenvolvimento node e python para rodar estas aplicações, ou se preferir podemos rodá-las a partir de um container Docker.
+Keep in mind that we need a Node.js and Python development environment to run these applications, or if you prefer, we can run them from a Docker container.
 
-## Rodar usando docker
+## Running using Docker
 
-Temos um `docker.compose.yaml` em nosso repositório, assim podemos buildar e rodar nossas aplicações com apenas um comando, lembrando que precisamos ter o docker instalado e configurado corretamente:
+We have a `docker.compose.yaml` in our repository, so we can build and run our applications with just one command, remembering that we need to have Docker installed and configured correctly:
 
 ```shell
 foo@bash:~$ docker compose up
 ```
 
-## Front-end compilando manualmente
+## Front-end Manual Compilation
 
-Para buildar individualmente nosso front-end recomendamos o package manager `yarn`
+To individually build our front-end, we recommend using the yarn package manager.
 
-Entre na pasta `/mvp/frontend/` execute o comando
+Go to the /mvp/frontend/ folder and execute the following command:
 
 ```shell
 foo@bash:~$ yarn
 ```
 
-Para rodar a aplicação, realize um build e depois o seu preview:
+To run the application, build it first, and then preview it:
 
 ```shell
 foo@bash:~$ yarn build; yarn preview
 ```
 
-Usando o `;` nós rodamos um comando após a finalização do outro :)
+Using `;` we run one command after the completion of the other :)
 
-## Back-end compilando manualmente
+## Back-end Manual Compilation
 
-Para buildar individualmente nosso back-end recomendamos usar o `venv` do `Python`
+To individually build our back-end, we recommend using venv in Python.
 
-Entre na pasta `/mvp/backend/` execute o comando a seguir para isolar seu build em um ambiente virtual:
+Go to the /mvp/backend/ folder and execute the following command to isolate your build in a virtual environment:
 
 ```shell
 foo@bash:~$ python3 -m venv venv; source venv/bin/activate
 ```
 
-Usando o `;` nós rodamos um comando após a finalização do outro :)
+Using `;` we run one command after the completion of the other :)
 
-Após isso, ainda na pasta `/mvp/backend` instale as dependências do projeto:
+After that, still in the /mvp/backend folder, install the project dependencies:
 
 ```shell
 foo@bash:~$ pip install -r requirements.txt
 ```
 
-Para rodar a aplicação, realize um build e depois o seu preview:
+To run the application, build it first, and then preview it:
 
 ```shell
 foo@bash:~$ flask --app app run --host 0.0.0.0
 ```
+# Accessing the System
 
-# Acessando o sistema
-
-Independente do meio que você escolheu, nossos apps estarão disponíveis nas seguintes urls:
+Regardless of the method you choose, our apps will be available at the following URLs:
 
 ### Front-end
 
@@ -89,25 +87,25 @@ Independente do meio que você escolheu, nossos apps estarão disponíveis nas s
 
 [http://localhost:5000/openapi](http://localhost:5000/openapi)
 
-# Rodando testes
+# Running Tests
 
-Nosso back-end conta com testes para validar a eficácia do modelo fornecido. Estamos assumindo um critério alto para este preditor, esperando uma acurácia de 98% ou mais.
+Our back-end has tests to validate the effectiveness of the provided model. We assume a high criterion for this predictor, expecting an accuracy of 98% or more.
 
-Para rodar os testes, entre na pasta `/mvp/backend/` execute o comando a seguir para isolar seu build em um ambiente virtual:
+To run the tests, go to the /mvp/backend/ folder and execute the following command to isolate your build in a virtual environment:
 
 ```shell
 foo@bash:~$ python3 -m venv venv; source venv/bin/activate
 ```
 
-Usando o `;` nós rodamos um comando após a finalização do outro :)
+Using `;` we run one command after the completion of the other :)
 
-Após isso, ainda na pasta `/mvp/backend` instale as dependências do projeto:
+After that, still in the /mvp/backend folder, install the project dependencies:
 
 ```shell
 foo@bash:~$ pip install -r requirements.txt
 ```
 
-Após isso, ainda na pasta `/mvp/backend` execute o pytest e aguarde o output:
+After that, still in the /mvp/backend folder, execute pytest and wait for the output:
 
 ```shell
 foo@bash:~$ pytest
